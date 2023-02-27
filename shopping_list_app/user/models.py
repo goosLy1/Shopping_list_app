@@ -1,11 +1,14 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
-class User(models.Model):
-    email = models.EmailField(max_length=120, unique=True, null=False)
-    password = models.CharField(max_length=120, unique=True, null=False)
+User = get_user_model()
 
-    def __str__(self) -> str:
-        return f'User with email: {self.email}'
+# class User(models.Model):
+#     email = models.EmailField(max_length=120, unique=True, null=False)
+#     password = models.CharField(max_length=120, unique=True, null=False)
+
+#     def __str__(self) -> str:
+#         return f'User with email: {self.email}'
 
 
 class Shopping_list(models.Model):
