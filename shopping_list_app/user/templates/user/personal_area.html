@@ -1,0 +1,27 @@
+{% extends 'user/base.html' %} 
+
+{% block title %} 
+    Personal area 
+{% endblock %} 
+
+{% block content %}
+<h1>Personal area of {{ username }}</h1>
+<br/>
+<table>
+    <thead><th>Label</th><th></th><th>Price</th></thead>
+    {% for position in shopping_list %}
+    <tr>
+        <td>{{ position.label }}</td>
+        <th></th>
+        <td>{{ position.price }}</td>
+        
+    </tr>
+    {% endfor %}
+</table>
+<br/>
+<h3>Total:</h3> {{ total }}
+
+
+
+
+{% endblock %}
