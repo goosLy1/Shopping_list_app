@@ -13,6 +13,7 @@
     <input type="submit"
     value="Create shopping list" class="btn btn-secondary">
 </form>
+<br/>
 {% if shopping_lists %}
 <!-- <table>
     <thead><th>Label</th><th></th><th>Price</th></thead>
@@ -28,13 +29,20 @@
 <br/>
 <h3>Total:</h3> {{ total }} -->
 {% for list in shopping_lists %}
-    <div class="alert alert-warning mt-2">
-        <h3>{{ list.label }}</h3>
+    <div class="input-group input-group-lg">
+        
+        <input type="text" class="form-control" value="{{ list.label }}">
+        <input type="submit" value="Choose Action..." class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="#">Manage list</a></li>
+            <li><a class="dropdown-item" href="{% url 'delete_list' list.id %}">Delete list</a></li>
+          </ul>
     </div>
+    <br/>
 {% endfor %}
 
 {% else %}
-<p>You don't have shopping lists yet... To create a list press the "Create" button</p>
+<p>You don't have shopping lists yet... To create a list press the "Create..." button</p>
 {% endif %}
 
 

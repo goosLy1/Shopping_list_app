@@ -78,3 +78,11 @@ def create_list(request):
     else:
         form = CreateShoppingListForm()
     return render(request, 'user/create_list.html', {'form': form})
+
+def delete_list(request, list_id):
+    try: 
+        shopping_list = Shopping_list.objects.get(id = list_id)
+        shopping_list.delete()
+        return redirect('personal_area', user_id = request.user.id)
+    except Shopping_list.DoesNotExist:
+         messages.success(request, ("Shopping list not found"))
