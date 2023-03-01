@@ -5,9 +5,16 @@
 {% endblock %} 
 
 {% block content %}
+
 <h1>Personal area of {{ username }}</h1>
 <br/>
-<table>
+
+<form action="{% url 'create_list' %}">
+    <input type="submit"
+    value="Create shopping list" class="btn btn-secondary">
+</form>
+{% if shopping_lists %}
+<!-- <table>
     <thead><th>Label</th><th></th><th>Price</th></thead>
     {% for position in shopping_list %}
     <tr>
@@ -19,8 +26,16 @@
     {% endfor %}
 </table>
 <br/>
-<h3>Total:</h3> {{ total }}
+<h3>Total:</h3> {{ total }} -->
+{% for list in shopping_lists %}
+    <div class="alert alert-warning mt-2">
+        <h3>{{ list.label }}</h3>
+    </div>
+{% endfor %}
 
+{% else %}
+<p>You don't have shopping lists yet... To create a list press the "Create" button</p>
+{% endif %}
 
 
 

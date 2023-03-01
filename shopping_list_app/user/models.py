@@ -14,7 +14,7 @@ User = get_user_model()
 class Shopping_list(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     label = models.CharField(max_length=120)
-    price = models.FloatField()
+    
 
     def __str__(self) -> str:
         return self.label

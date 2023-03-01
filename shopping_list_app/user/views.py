@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from .models import Shopping_list
+from django.db.models import Sum
+from .forms import *
 
 
 def index(request):
@@ -53,8 +55,26 @@ def sign_up(request):
 def personal_area(request, user_id):
     user = get_object_or_404(get_user_model(), pk=user_id)
     username = user.get_username()
-    shopping_list = get_list_or_404(Shopping_list, user_id = user_id)
-    total = 0
-    for position in shopping_list:
-        total+=position.price
-    return render(request, 'user/personal_area.html', {'shopping_list': shopping_list, 'username': username, 'total': total})
+    # shopping_list = get_list_or_404(Shopping_list, user_id = user_id)
+    shopping_lists = user.shopping_list_set.all()
+    # total = sum(position.price for position in shopping_list)
+    # for position in shopping_list:
+    #     total+=position.price
+    context = {'shopping_lists': shopping_lists, 'username': username}
+    return render(request, 'user/personal_area.html', context)
+
+def create_list(request):
+    if request.method == "POST":
+        form = CreateShoppingListForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            # print(form.cleaned_data)
+            try:
+                Shopping_list.objects.create(label=form.cleaned_data['label'], user_id=user.id)
+                return redirect('personal_area', user_id = user.id)
+            except:
+                form.add_error(None, 'Creation list error') 
+            
+    else:
+        form = CreateShoppingListForm()
+    return render(request, 'user/create_list.html', {'form': form})
