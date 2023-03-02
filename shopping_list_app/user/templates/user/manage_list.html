@@ -1,0 +1,32 @@
+{% extends 'user/base.html' %} 
+
+{% block title %} 
+    Manage of shopping list 
+{% endblock %} 
+
+{% block content %}
+
+<h1>Manage of shopping list</h1>
+<br/>
+
+<form action="{% url 'manage_list' list_id %}" method=POST>
+    {% csrf_token %}
+    <div class="form-error">{{ form.non_field_errors }}</div>
+    {{ form.as_p }}
+
+    <br/>
+    <input type="submit"
+    value="Add position" class="btn btn-secondary">
+</form>
+{% if products %}
+<h3>Total price: {{ total_price }}</h3>
+{% for product in products %}
+    <h3>{{ product.label }}</h3>
+    <h3>{{ product.price }}</h3>
+    <br/>
+{% endfor %}
+
+{% else %}
+<p>You don't have any positions in the list yet... To add a position, click "Add position" button</p>
+{% endif %}
+{% endblock %}

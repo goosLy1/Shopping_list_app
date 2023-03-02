@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render, get_object_or_404, get_list_or_40
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from .models import Shopping_list
+from .models import Shopping_list, Product
 from django.db.models import Sum
 from .forms import *
 
@@ -86,3 +86,24 @@ def delete_list(request, list_id):
         return redirect('personal_area', user_id = request.user.id)
     except Shopping_list.DoesNotExist:
          messages.success(request, ("Shopping list not found"))
+
+
+def manage_list(request, list_id):
+    current_list = Shopping_list.objects.get(id = list_id)
+    if request.method == "POST":
+        form = CreateProductForm(request.POST)
+        if form.is_valid():
+            try:
+               
+                new_product = Product.objects.create(**form.cleaned_data)
+                current_list.products.add(new_product)
+                
+                return redirect('manage_list', list_id = list_id)
+            except:
+                form.add_error(None, 'Creation product error')
+        
+    else:        
+        form = CreateProductForm()
+    products = current_list.products.all()
+    total_price = sum(product.price for product in products)
+    return render(request, 'user/manage_list.html', {'form': form, 'list_id': list_id, 'products': products, 'total_price': total_price})

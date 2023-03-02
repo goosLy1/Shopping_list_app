@@ -15,28 +15,20 @@
 </form>
 <br/>
 {% if shopping_lists %}
-<!-- <table>
-    <thead><th>Label</th><th></th><th>Price</th></thead>
-    {% for position in shopping_list %}
-    <tr>
-        <td>{{ position.label }}</td>
-        <th></th>
-        <td>{{ position.price }}</td>
-        
-    </tr>
-    {% endfor %}
-</table>
-<br/>
-<h3>Total:</h3> {{ total }} -->
 {% for list in shopping_lists %}
-    <div class="input-group input-group-lg">
-        
-        <input type="text" class="form-control" value="{{ list.label }}">
-        <input type="submit" value="Choose Action..." class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-        <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Manage list</a></li>
-            <li><a class="dropdown-item" href="{% url 'delete_list' list.id %}">Delete list</a></li>
-          </ul>
+    <div class="row"> 
+        <div class="row row justify-content-start">
+            <div class="col-2">
+                <a href="{% url 'manage_list' list.id %}"><input type="text" class="btn btn-outline-secondary" value="{{ list.label }}"></a>
+            </div>
+            <div class="col-4">
+                <input type="submit" value="Choose Action..." class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Rename of list</a></li>
+                    <li><a class="dropdown-item" href="{% url 'delete_list' list.id %}">Delete list</a></li>
+                </ul>
+            </div>
+        </div>
     </div>
     <br/>
 {% endfor %}
