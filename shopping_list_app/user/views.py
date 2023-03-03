@@ -106,4 +106,20 @@ def manage_list(request, list_id):
         form = CreateProductForm()
     products = current_list.products.all()
     total_price = sum(product.price for product in products)
-    return render(request, 'user/manage_list.html', {'form': form, 'list_id': list_id, 'products': products, 'total_price': total_price})
+    context = {'form': form, 'list_id': list_id, 'products': products, 'total_price': total_price}
+    return render(request, 'user/manage_list.html', context)
+
+
+def update_list(request, list_id):
+    current_list = Shopping_list.objects.get(id = list_id)
+    form = CreateShoppingListForm(initial={'label': current_list.label})
+    if request.method == "POST":
+        form = CreateShoppingListForm(request.POST)
+        if form.is_valid():
+            try: 
+                current_list.label = form.cleaned_data['label']
+                current_list.save(update_fields=['label'])
+                return redirect('personal_area', user_id = request.user.id)
+            except:
+                form.add_error(None, 'Updating list error')
+    return render(request, 'user/update_list.html', {"form": form, 'list_id': list_id})
