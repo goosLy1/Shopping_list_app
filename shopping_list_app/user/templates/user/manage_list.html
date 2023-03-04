@@ -18,11 +18,17 @@
     <input type="submit"
     value="Add position" class="btn btn-secondary">
 </form>
+<br/>
 {% if products %}
-<h3>Total price: {{ total_price }}</h3>
+<h3>Total price: <span class="badge bg-secondary"> {{ total_price }} RUB </span></h3>
+<br/>
 {% for product in products %}
-    <h3>{{ product.label }}</h3>
-    <h3>{{ product.price }}</h3>
+    <ul class="list-group list-group-light list-group-small">
+        <li class="list-group-item">{{ product.label }} 
+            <span class="badge bg-secondary"> {{ product.price }} RUB </span>
+            <a class="btn btn-danger btn-rounded" href="#" role="button">Delete</a>
+        </li>
+    </ul>
     <br/>
 {% endfor %}
 
