@@ -79,28 +79,20 @@ def create_list(request):
         form = CreateShoppingListForm()
     return render(request, 'user/create_list.html', {'form': form})
 
-def delete_list(request, list_id):
-    try: 
-        shopping_list = Shopping_list.objects.get(id = list_id)
-        shopping_list.delete()
-        return redirect('personal_area', user_id = request.user.id)
-    except Shopping_list.DoesNotExist:
-         messages.success(request, ("Shopping list not found"))
-
 
 def manage_list(request, list_id):
     current_list = Shopping_list.objects.get(id = list_id)
     if request.method == "POST":
         form = CreateProductForm(request.POST)
         if form.is_valid():
-            try:
+            # try:
                
-                new_product = Product.objects.create(**form.cleaned_data)
-                current_list.products.add(new_product)
+                new_product, created = Product.objects.get_or_create(**form.cleaned_data)
+                current_list.products.add(new_product.id)
                 
                 return redirect('manage_list', list_id = list_id)
-            except:
-                form.add_error(None, 'Creation product error')
+            # except:
+            #     form.add_error(None, 'Creation product error')
         
     else:        
         form = CreateProductForm()
@@ -123,3 +115,22 @@ def update_list(request, list_id):
             except:
                 form.add_error(None, 'Updating list error')
     return render(request, 'user/update_list.html', {"form": form, 'list_id': list_id})
+
+
+def delete_list(request, list_id):
+    try: 
+        shopping_list = Shopping_list.objects.get(id = list_id)
+        shopping_list.delete()
+        return redirect('personal_area', user_id = request.user.id)
+    except Shopping_list.DoesNotExist:
+         messages.success(request, ("Shopping list not found"))
+
+
+def delete_product(request, list_id, product_id):
+    try:
+        current_list = Shopping_list.objects.get(id = list_id)
+        current_product = Product.objects.get(id = product_id)
+        current_list.products.remove(current_product)
+        return redirect('manage_list', list_id = list_id)
+    except Product.DoesNotExist:
+         messages.success(request, ("Product not found"))

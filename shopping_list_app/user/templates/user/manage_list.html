@@ -26,13 +26,13 @@
     <ul class="list-group list-group-light list-group-small">
         <li class="list-group-item">{{ product.label }} 
             <span class="badge bg-secondary"> {{ product.price }} RUB </span>
-            <a class="btn btn-danger btn-rounded" href="#" role="button">Delete</a>
+            <a class="btn btn-danger btn-rounded" href="{% url 'delete_product' list_id product.id %}" role="button">Delete</a>
         </li>
     </ul>
     <br/>
 {% endfor %}
 
 {% else %}
-<p>You don't have any positions in the list yet... To add a position, click "Add position" button</p>
+<p>You don't have any positions in the list yet... To add a position, fill in the fields and click "Add position" button</p>
 {% endif %}
 {% endblock %}
