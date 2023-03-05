@@ -2,8 +2,8 @@ from django.shortcuts import redirect, render, get_object_or_404, get_list_or_40
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.views.generic import ListView
 from .models import Shopping_list, Product
-from django.db.models import Sum
 from .forms import *
 
 
@@ -52,16 +52,28 @@ def sign_up(request):
     return render(request, 'authenticate/sign_up.html', {'form': form})
 
 
-def personal_area(request, user_id):
-    user = get_object_or_404(get_user_model(), pk=user_id)
-    username = user.get_username()
-    # shopping_list = get_list_or_404(Shopping_list, user_id = user_id)
-    shopping_lists = user.shopping_list_set.all()
-    # total = sum(position.price for position in shopping_list)
-    # for position in shopping_list:
-    #     total+=position.price
-    context = {'shopping_lists': shopping_lists, 'username': username}
-    return render(request, 'user/personal_area.html', context)
+class PersonalArea(ListView):
+    model = Shopping_list
+    template_name = 'user/personal_area.html'
+    context_object_name = 'shopping_lists'
+
+    def get_queryset(self):
+        return Shopping_list.objects.filter(user__id=self.kwargs['user_id'])
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['username'] = get_object_or_404(get_user_model(),
+                                                pk = self.kwargs['user_id']).get_username()
+        return context
+
+# def personal_area(request, user_id):
+#     user = get_object_or_404(get_user_model(), pk=user_id)
+#     username = user.get_username()
+#     # shopping_list = get_list_or_404(Shopping_list, user_id = user_id)
+#     shopping_lists = user.shopping_list_set.all()
+#     context = {'shopping_lists': shopping_lists, 'username': username}
+#     return render(request, 'user/personal_area.html', context)
 
 def create_list(request):
     if request.method == "POST":
