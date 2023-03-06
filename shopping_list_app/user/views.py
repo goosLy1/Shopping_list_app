@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render, get_object_or_404, get_list_or_40
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
-from django.views.generic import ListView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView
 from .models import Shopping_list, Product
 from .forms import *
 
@@ -75,36 +76,55 @@ class PersonalArea(ListView):
 #     context = {'shopping_lists': shopping_lists, 'username': username}
 #     return render(request, 'user/personal_area.html', context)
 
-def create_list(request):
-    if request.method == "POST":
-        form = CreateShoppingListForm(request.POST)
-        if form.is_valid():
-            user = request.user
-            # print(form.cleaned_data)
-            try:
-                Shopping_list.objects.create(label=form.cleaned_data['label'], user_id=user.id)
-                return redirect('personal_area', user_id = user.id)
-            except:
-                form.add_error(None, 'Creation list error') 
-            
-    else:
-        form = CreateShoppingListForm()
-    return render(request, 'user/create_list.html', {'form': form})
 
+class CreateList(CreateView):
+    form_class = CreateShoppingListForm
+    template_name = 'user/create_list.html'
+    # success_url = reverse('personal_area', kwargs={'pk': self.pk})
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+
+# def create_list(request):
+#     if request.method == "POST":
+#         form = CreateShoppingListForm(request.POST)
+#         if form.is_valid():
+#             user = request.user
+#             try:
+#                 Shopping_list.objects.create(label=form.cleaned_data['label'], user_id=user.id)
+#                 return redirect('personal_area', user_id = user.id)
+#             except:
+#                 form.add_error(None, 'Creation list error') 
+            
+#     else:
+#         form = CreateShoppingListForm()
+#     return render(request, 'user/create_list.html', {'form': form})
+
+
+# class ManageList(CreateView, ListView):
+#     model = Product
+#     template_name = 'user/manahe_list.html'
+#     context_object_name = 'products'
+#     form_class = CreateProductForm
+
+#     def get_queryset(self):
+#         return Product.objects.filter(shopping_list__id = self.kwargs['list_id'])
 
 def manage_list(request, list_id):
     current_list = Shopping_list.objects.get(id = list_id)
     if request.method == "POST":
         form = CreateProductForm(request.POST)
         if form.is_valid():
-            # try:
+            try:
                
                 new_product, created = Product.objects.get_or_create(**form.cleaned_data)
                 current_list.products.add(new_product.id)
                 
                 return redirect('manage_list', list_id = list_id)
-            # except:
-            #     form.add_error(None, 'Creation product error')
+            except:
+                form.add_error(None, 'Creation product error')
         
     else:        
         form = CreateProductForm()

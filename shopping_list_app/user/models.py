@@ -1,7 +1,8 @@
 from django.db import models
-from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.urls import reverse, reverse_lazy
 
-User = get_user_model()
+
 
 # class User(models.Model):
 #     email = models.EmailField(max_length=120, unique=True, null=False)
@@ -30,3 +31,6 @@ class Shopping_list(models.Model):
 
     def __str__(self) -> str:
         return self.label
+    
+    def get_absolute_url(self):
+        return reverse('personal_area', args=[self.user.id])
